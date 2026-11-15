@@ -1,0 +1,51 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /cafes/{id} {
+      // Semua orang boleh melihat daftar cafe
+      allow read: if true;
+
+      // Hanya barista yang sudah login yang boleh mendaftarkan cafe; ia menjadi pemiliknya
+      allow create: if request.auth != null
+        && request.resource.data.keys().hasOnly(
+          ['name', 'address', 'capacity', 'count', 'updatedAt', 'deleted', 'ownerUid'])
+        && request.resource.data.ownerUid == request.auth.uid
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.name.size() <= 60
+        && request.resource.data.address is string
+        && request.resource.data.address.size() > 0
+        && request.resource.data.address.size() <= 120
+        && request.resource.data.capacity is int
+        && request.resource.data.capacity > 0
+        && request.resource.data.capacity <= 1000
+        && request.resource.data.count == 0
+        && request.resource.data.deleted == false;
+
+      // Hanya pemilik yang boleh mengubah jumlah atau menghapus (soft delete)
+      allow update: if request.auth != null
+        && request.auth.uid == resource.data.ownerUid
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['count', 'updatedAt', 'deleted'])
+        && request.resource.data.count is int
+        && request.resource.data.count >= 0
+        && request.resource.data.count <= 5000;
+
+      allow delete: if false;
+
+      // Riwayat keramaian: semua boleh membaca, hanya pemilik yang boleh menambah
+      match /history/{hid} {
+        allow read: if true;
+        allow create: if request.auth != null
+          && get(/databases/$(database)/documents/cafes/$(id)).data.ownerUid == request.auth.uid
+          && request.resource.data.keys().hasOnly(['count', 'capacity', 'ts'])
+          && request.resource.data.count is int
+          && request.resource.data.count >= 0
+          && request.resource.data.count <= 5000
+          && request.resource.data.capacity is int
+          && request.resource.data.ts is int;
+        allow update, delete: if false;
+      }
+    }
+  }
+}
