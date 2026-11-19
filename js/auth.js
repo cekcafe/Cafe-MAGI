@@ -1,4 +1,3 @@
-// Layanan login barista (Firebase Authentication, email dan kata sandi).
 import { onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut }
   from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { auth } from "./firebase.js";

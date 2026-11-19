@@ -1,4 +1,3 @@
-// Pembuat tampilan (HTML). Fungsi di sini hanya mengubah data menjadi teks HTML, tanpa menyentuh database.
 import { LABEL, esc, status, isStale, ago, mapQuery, countByState } from "./utils.js";
 
 const CHIPS = [["semua", "Semua"], ["sepi", "Sepi"], ["sedang", "Lumayan ramai"], ["ramai", "Ramai"], ["lama", "Data lama"]];
@@ -37,7 +36,6 @@ export function historyHtml(rows) {
     <div class="axis"><span>0</span><span>6</span><span>12</span><span>18</span><span>23</span></div>${note}</div>`;
 }
 
-// opts: { owner, showMap, showHist, rows }
 export function cardHtml(c, opts) {
   const stale = isStale(c), s = status(c);
   const pct = Math.min(100, Math.round(c.count / Math.max(1, c.capacity) * 100));

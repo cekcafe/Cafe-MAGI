@@ -1,4 +1,3 @@
-// Pintu masuk aplikasi: menyimpan keadaan halaman dan menghubungkan tampilan dengan data.
 import { $, LABEL, status, isStale, validFilter, matchesFilter } from "./utils.js";
 import { chipsHtml, authBarHtml, cardHtml } from "./views.js";
 import { authReady, watchUser, login, register, logout, authError } from "./auth.js";
@@ -7,7 +6,6 @@ import { dbReady, subscribeCafes, addCafe, updateCount, removeCafe, loadHistory,
 let cafes = [], user = null, filter = "semua", cur = null, delArmed = false, authMode = "login";
 const openMaps = new Set(), openHist = new Set(), hist = {};
 
-/* ---------- Menggambar halaman ---------- */
 function render() {
   filter = validFilter(cafes, filter);
   $("chips").innerHTML = chipsHtml(cafes, filter);
@@ -25,7 +23,6 @@ async function showHistory(id) {
   render();
 }
 
-/* ---------- Filter, pencarian, dan tombol di kartu ---------- */
 $("chips").addEventListener("click", (e) => { const b = e.target.closest("[data-f]"); if (b) { filter = b.dataset.f; render(); } });
 $("q").addEventListener("input", render);
 
@@ -47,14 +44,13 @@ $("grid").addEventListener("click", async (e) => {
 
 async function share(c) {
   if (!c) return;
-  const text = isStale(c) ? `Cek kondisi ${c.name} di Ngopi Radar:`
-    : `${c.name} lagi ${c.count >= c.capacity ? "penuh" : LABEL[status(c)].toLowerCase()} (${c.count} dari ${c.capacity} kursi). Cek di Ngopi Radar:`;
+  const text = isStale(c) ? `Cek kondisi ${c.name} di Cek Keramaian Cafe:`
+    : `${c.name} lagi ${c.count >= c.capacity ? "penuh" : LABEL[status(c)].toLowerCase()} (${c.count} dari ${c.capacity} kursi). Lihat di Cek Keramaian Cafe:`;
   const url = location.origin + location.pathname;
-  if (navigator.share) { try { await navigator.share({ title: "Ngopi Radar", text, url }); } catch (_) {} }
+  if (navigator.share) { try { await navigator.share({ title: "Cek Keramaian Cafe", text, url }); } catch (_) {} }
   else window.open("https://wa.me/?text=" + encodeURIComponent(text + " " + url), "_blank", "noopener");
 }
 
-/* ---------- Perbarui dan hapus cafe ---------- */
 const num = () => { const v = parseInt($("updNum").value, 10); return isNaN(v) || v < 0 ? 0 : v; };
 $("minus").onclick = () => { $("updNum").value = Math.max(0, num() - 1); };
 $("plus").onclick = () => { $("updNum").value = num() + 1; };
@@ -78,7 +74,6 @@ $("updDelete").onclick = async function () {
   catch (e) { $("updMsg").textContent = saveError(e); resetDelete(); }
 };
 
-/* ---------- Daftarkan cafe ---------- */
 $("addBtn").onclick = () => {
   if (!user) { openAuth("Masuk dulu sebagai barista untuk mendaftarkan cafe."); return; }
   ["aName", "aAddr"].forEach((i) => ($(i).value = "")); $("aCap").value = 30; $("addMsg").textContent = ""; $("addDlg").showModal();
@@ -95,7 +90,6 @@ $("addSave").onclick = async () => {
   finally { $("addSave").disabled = false; }
 };
 
-/* ---------- Login barista ---------- */
 function setMode(m) {
   authMode = m;
   $("authTitle").textContent = m === "login" ? "Masuk barista" : "Daftar akun barista";
@@ -119,7 +113,6 @@ $("authBar").addEventListener("click", (e) => {
   if (e.target.id === "logout") logout();
 });
 
-/* ---------- Mulai ---------- */
 if (!dbReady) $("setup").hidden = false;
 watchUser((u) => { user = u; render(); });
 subscribeCafes(
@@ -127,4 +120,4 @@ subscribeCafes(
   () => { $("grid").innerHTML = `<div class="empty">Data tidak bisa dimuat. Periksa konfigurasi dan aturan Firestore.</div>`; }
 );
 render();
-setInterval(render, 60000); // segarkan label waktu dan status "Data lama"
+setInterval(render, 60000);

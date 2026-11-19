@@ -1,5 +1,3 @@
-// Konfigurasi Firebase untuk project "Mau Ngecafe Cek Keramaian Dulu".
-// Nilai ini memang bersifat publik; keamanan data dijaga oleh aturan di firestore.rules.
 export const firebaseConfig = {
   apiKey: "AIzaSyBu2T9MVYCJtE2Qh1I7YD_YLr_zVU0sCug",
   authDomain: "mau-ngecafe-cek-keramaian-dulu.firebaseapp.com",

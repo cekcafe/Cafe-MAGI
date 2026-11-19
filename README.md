@@ -1,4 +1,4 @@
-# Ngopi Radar
+# Cek Keramaian Cafe
 
 Website untuk mengecek apakah sebuah cafe sedang ramai atau sepi. Barista memasukkan jumlah orang di cafe, pengunjung melihat statusnya dan lokasinya lewat Google Maps.
 
@@ -82,7 +82,7 @@ Atau lewat terminal:
 ```bash
 git init
 git add .
-git commit -m "Ngopi Radar"
+git commit -m "Cek Keramaian Cafe"
 git branch -M main
 git remote add origin https://github.com/USERNAME/ngopi-radar.git
 git push -u origin main

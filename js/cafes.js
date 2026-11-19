@@ -1,11 +1,9 @@
-// Akses data cafe di Firestore. Semua baca/tulis database ada di sini.
 import { collection, doc, setDoc, updateDoc, writeBatch, onSnapshot, getDocs, query, orderBy, limit }
   from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { db } from "./firebase.js";
 
 export const dbReady = !!db;
 
-// Memantau daftar cafe secara langsung; cafe yang ditandai terhapus disembunyikan
 export function subscribeCafes(onData, onError) {
   if (!db) return;
   onSnapshot(collection(db, "cafes"),
@@ -18,7 +16,6 @@ export function addCafe({ name, address, capacity }, ownerUid) {
     { name, address, capacity, count: 0, updatedAt: null, deleted: false, ownerUid });
 }
 
-// Memperbarui jumlah orang sekaligus mencatatnya ke riwayat (satu paket, berhasil semua atau tidak sama sekali)
 export function updateCount(cafe, count) {
   const now = Date.now(), batch = writeBatch(db);
   batch.update(doc(db, "cafes", cafe.id), { count, updatedAt: now });
@@ -26,7 +23,6 @@ export function updateCount(cafe, count) {
   return batch.commit();
 }
 
-// "Hapus" hanya menandai cafe; datanya tetap ada di database
 export const removeCafe = (id) => updateDoc(doc(db, "cafes", id), { deleted: true, updatedAt: Date.now() });
 
 export async function loadHistory(id) {
